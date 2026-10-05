@@ -1,43 +1,37 @@
-# Campus Relay Form Ready Answers
+# Campus Relay Submission Answers
 
-Use these as candidate-reviewed drafts. Enter identity details yourself and do not submit until you have checked the live links and recorded your own video.
-
-## Working asset
-
-https://campus-relay-growth.vercel.app
-
-Public source: https://github.com/Ajey95/campus-relay-growth
-
-The landing route creates an isolated fictional workspace. The separate Growth desk link is issued there; the student invitation never includes its operator token.
-
-## Your 3 Tests
-
-1. **Personalised project preview** — Hypothesis: a branch/level/student-written idea match raises sign-up intent. Test: generic workshop summary (A) versus Matchmaker preview (B), with stable assignment before exposure. Metric: unique eligible registrations / unique exposed visitors in each arm; monitor preview-to-form drop-off.
-2. **Concrete take-home value** — Hypothesis: a tangible starter path raises perceived value. Test: broad project description (A) versus actual starter bundle and next steps (B). Metric: unique eligible registrations / unique exposed visitors in each arm; monitor expectation clarity.
-3. **Cross-branch friend invite** — Hypothesis: distinct roles bring more valid peer registrations. Test: simple optional invite (A) versus two-engineering-branch shared-project preview (B), offered after the original registration. Metric: new eligible referred registrations / original registrants offered each arm; separately report invite opens and invalid/duplicate attempts.
-
-These are proposed tests. The app shows only fictional demo records and illustrative assignments, not a real experiment outcome.
-
-## What changed between first idea and final solution?
-
-The first idea was a generic workshop page and broad promotion. The final Campus Relay asset asks five short conversational questions, including a branch-specific challenge or the student’s own idea, then reveals three AI-generated one-hour project proposals with personal-fit reasons. Curated examples remain available through a separate action. It adds an optional cross-department invite and tracks unique eligible registrations by first-touch source across community, academic and creator links.
-
-## What would another 24 hours improve?
-
-I would first confirm the actual date, instructor, curriculum and permissible claims with the organiser. With consent, I would ask a small group of final-year engineering students and a mentor to test whether the project previews are understandable and feasible in one hour. I would then fix the weakest observed funnel step and revise the partner messages before any real distribution. This review has not happened in the simulation.
-
-## What AI advice was rejected and why?
-
-The coding agent's generated dashboard concept introduced a ₹50 referral reward and experiment names that were not in the brief. The agent rejected those elements in the implemented product: the budget is for limited fixed production costs, and the plan's three tests are personalised preview, concrete take-home value and cross-branch invitation. The dashboard uses exposure denominators rather than raw registration totals. **Candidate: review this decision and rewrite the answer in your own words before submitting.**
-
-## AI learning notes link
-
-https://campus-relay-growth.vercel.app/assets/AI_Worklog.md
-
-## Growth plan link
+## Growth Plan — PDF link
 
 https://campus-relay-growth.vercel.app/assets/Campus_Relay_Growth_Plan.pdf
 
-## Video link and identity
+## Working Asset — live link
 
-Add your own public three-minute video URL and your own verified identity details in the form. These are deliberately not invented here.
+https://campus-relay-growth.vercel.app
+
+## Your 3 Tests — paragraph
+
+**Test 1, personalised preview:** Hypothesis: a project preview shaped by a student's branch and own idea will increase sign-up intent. What I would test: randomly show a generic workshop summary to one group and the Matchmaker preview to another before they start the form. Metric: unique eligible registrations divided by unique exposed visitors in each group, with preview-to-form drop-off as a check. **Test 2, concrete take-home:** Hypothesis: showing a tangible starter path will increase perceived value. What I would test: compare a broad project description with a selected project's input-to-output flow, downloadable outline and next steps. Metric: unique eligible registrations divided by unique exposed visitors in each group; also check whether students understand this is a starter, not a finished project. **Test 3, shared-project invite:** Hypothesis: an invitation showing distinct roles for two engineering branches will bring more valid peers than a generic friend invite. What I would test: offer the two versions after the original registration. Metric: new eligible referred registrations divided by original registrants offered each version, with opens, self-referrals and duplicates reported separately. These are proposed tests; the demo contains no real campaign outcomes.
+
+## AI Worklog — short answer and URL
+
+1. I asked for personal project discovery. AI first produced a guided chat with fixed follow-ups; I asked for a bounded, responsive interviewer. The final flow generates two contextual questions before recommending three projects. 2. In a CSE beginner text check, the initial ranker put a broad feedback project ahead of a more fitting FAQ finder. The scoring was corrected and checked again. 3. An AI dashboard concept suggested a ₹50 referral reward and unrelated tests. The build rejected both because they were not in the plan and the reward could erode the ₹2,000 ceiling; the final desk uses the three proposed tests with exposure denominators and simulated labels.
+
+Full worklog: https://campus-relay-growth.vercel.app/assets/AI_Worklog.md
+
+## What changed between the first idea and the final solution?
+
+The first idea was a generic workshop page. I wanted students to see a small project relevant to their own problem before registering, so Campus Relay became a conversational Matchmaker with three selectable project recommendations, a fictional registration and friend-invite journey, and a Growth desk that tracks unique eligible registrations by source. The project previews are proposals, not a confirmed NxtWave syllabus.
+
+## What would I improve with another 24 hours?
+
+I would verify the workshop date, instructor, curriculum and permitted claims with the organiser. Then, with consent, I would ask a few final-year engineering students and a domain mentor to try the chat and judge whether each proposed first-hour result is clear and realistic. I would fix the weakest observed step before distributing any campaign material. None of that outreach or user testing has occurred in this simulation.
+
+## What did AI suggest that I deliberately rejected, and why?
+
+AI first offered a mostly predetermined, branch-aware chat. I rejected that as the final experience because a student could type an original idea yet receive follow-up questions that barely changed. I asked for a constrained AI interviewer instead: two questions respond to the student's idea and previous answer, while the conversation stays short and the final recommendations stay within a realistic one-hour starter scope. I also rejected an AI-generated dashboard concept's ₹50 referral reward because it was unsupported by the plan and could distort the ₹2,000 budget.
+
+## 3-Minute Video — URL
+
+https://campus-relay-growth.vercel.app/assets/Campus_Relay_3_Minute_Walkthrough.mp4
+
+This is a three-minute AI-narrated recording of the live app. It includes audible voiceover, visible captions and a selectable subtitle track. Registrations in the walkthrough are fictional.

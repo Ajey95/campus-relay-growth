@@ -1,13 +1,15 @@
-# Campus Relay Three Minute Video Outline
+# Campus Relay — Three Minute Walkthrough
 
-**For the candidate to record in their own words.** This is a screen order and timing guide, not a prerecorded or impersonated submission.
+This is an AI-narrated screen recording of the live Campus Relay application. It uses fictional `example.com` registrations. Captions are burned into the video, and a separate `.srt` caption file is provided.
 
-| Time | Show | Explain |
-|---|---|---|
-| 0:00–0:30 | Live home screen; open the chat Matchmaker and show the own-idea reply | Target: 2027 final-year engineering students. Free online proposed workshop, “Build Your First AI Project in 60 Minutes.” AI-generated previews are examples; logistics and syllabus need confirmation. |
-| 0:30–1:00 | Growth plan forecast and channel table | Three priority groups: technical clubs, academic/career channels, student creators; optional peer invite. 610 gross → assumed 18% reduction → 500 eligible is a stretch forecast, not an achieved count. Budget ceiling ₹2,000. |
-| 1:00–2:05 | Create an empty workspace; choose CSE/text; show project; register `student-a@example.com`; issue invite; open a second browser/profile; choose ECE; show pair roles; register `student-b@example.com`; open Growth desk | Demonstrate shared attribution and deduplication. Say both records are fictional and no email is sent. Show the unique eligible count and first-touch source. |
-| 2:05–2:35 | Three proposed tests and AI worklog | Explain exposure denominators and no significance claim. Mention the rejected generated dashboard suggestion of a ₹50 reward/unrelated tests and the corrected implementation. |
-| 2:35–3:00 | Growth plan closing section | First idea changed from generic page to project preview plus measured loop. Another 24 hours would confirm logistics and test comprehension with consent. Close with simulation boundary and what was not executed. |
+| Approximate time | What the recording shows |
+|---|---|
+| 0:00–0:27 | The proposed workshop, seven-day goal, ₹2,000 budget, and simulation disclosure. |
+| 0:27–0:57 | A student enters a hostel water-waste idea and answers two contextual AI follow-up questions. |
+| 0:57–1:17 | Three recommended projects; one selected project, its first-hour flow, hypothetical use, and comparable real-world source. |
+| 1:17–1:34 | Fictional registration, declared graduation year, and demo receipt. |
+| 1:34–1:47 | Friend link, second engineering branch, shared starter, and fictional friend registration. |
+| 1:47–2:25 | Growth desk: unique eligible registrations, sources, conversion, forecast assumptions, and budget. |
+| 2:25–3:00 | Three proposed tests, tracked partner links, and next steps. |
 
-Before recording: open the final live link signed out, keep one fresh empty workspace, prepare a second browser profile, avoid showing the private Growth desk token, and speak only from claims you personally checked.
+The narration is synthetic. The product demo and campaign numbers are labelled as such; no actual workshop campaign or student outreach is claimed.

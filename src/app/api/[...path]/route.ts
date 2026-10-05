@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
 import { BRANCHES, PROJECTS, Answers, pairProject, recommend, validAnswers } from '@/lib/catalog';
 import { generateIdeas } from '@/lib/ai-ideas';
+import { generateInterviewQuestion, validInterviewRequest } from '@/lib/interview';
 import { db, digest, emailDigest, ensureSchema, id, logEvent, operator, token, workspace } from '@/lib/db';
 
 export const runtime='nodejs';
@@ -77,6 +78,21 @@ export async function POST(req:NextRequest,ctx:Context) {
       await sql`INSERT INTO demo_workspaces(id,expires_at,seed_mode,target_year,operator_token_digest) VALUES(${workspaceId},now()+interval '7 days',${seeded},2027,${digest(operatorToken)})`;
       if(seeded) await seed(workspaceId);
       return NextResponse.json({workspaceId,seeded,expiresInDays:7,studentUrl:`${base(req)}/w/${workspaceId}`,operatorUrl:`${base(req)}/desk/${workspaceId}#operator=${operatorToken}`},{status:201});
+    }
+    if(path[0]==='interview' && path.length===1) {
+      const workspaceId=plain(data.workspaceId),visitorId=plain(data.visitorId);
+      if(!validInterviewRequest(data.interview))return error(422,'invalid_interview','Give a supported branch, idea and at most one previous reply.');
+      const visitor=await sql`SELECT id FROM visitors WHERE id=${visitorId} AND workspace_id=${workspaceId}`;
+      if(!visitor.length)return error(404,'visitor_missing','Start a demo visit before asking a question.');
+      if(!process.env.OPENAI_API_KEY)return error(503,'ai_unavailable','The live interviewer is unavailable. Continue with a guided question.');
+      const day=Math.floor(Date.now()/86400000),ip=req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';
+      await sql`DELETE FROM ai_daily_limits WHERE day_bucket<${day-1}`;
+      for(const [scope,key,limit] of [['interview_visitor',visitorId,8],['interview_workspace',workspaceId,150],['interview_ip',ip,80]] as const) {
+        const counter=await sql`INSERT INTO ai_daily_limits(scope,key_digest,day_bucket,requests) VALUES(${scope},${digest(key)},${day},1) ON CONFLICT(scope,key_digest,day_bucket) DO UPDATE SET requests=ai_daily_limits.requests+1 RETURNING requests`;
+        if(Number(counter[0].requests)>limit)return error(429,'ai_limit','The live interviewer has reached its daily limit. Continue with a guided question.');
+      }
+      try {return NextResponse.json(await generateInterviewQuestion(data.interview));}
+      catch(e) {console.error('AI interviewer failure',e instanceof Error?e.name:'unknown');return error(503,'ai_unavailable','The live interviewer is temporarily unavailable. Continue with a guided question.');}
     }
     if(path[0]==='recommendations' && path.length===1) {
       const workspaceId=plain(data.workspaceId), visitorId=plain(data.visitorId);

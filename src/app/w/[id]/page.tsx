@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Answers, PairProject, Project } from '@/lib/catalog';
 import { api } from '@/lib/client';
 import { STARTER_FILES } from '@/lib/starters';
+import { CURATED_PRECEDENT, PRECEDENTS } from '@/lib/precedents';
 import MatchmakerQuiz from './MatchmakerQuiz';
 import RegistrationChat from './RegistrationChat';
 
@@ -64,25 +65,28 @@ export default function Student() {
   async function downloadStarter() {
     if(!match)return;
     const p=match.primary;
-    const contents=`# ${p.title}\n\nCampus Relay assessment simulation. This is a proposed starter, not a confirmed workshop syllabus.\n\n## Goal\n${p.intro}\n\n## Input and output\nInput: ${p.input}\nOutput: ${p.output}\n\n## First hour\n${p.steps.map(x=>`- ${x}`).join('\n')}\n\n## Starter materials\n${p.starter.map(x=>`- ${x}`).join('\n')}\n\n## Limitation\n${p.caution}\n\n## Continue\n${p.next}\n`;
+    const precedent=PRECEDENTS[p.precedentId||CURATED_PRECEDENT[p.id]||'study'];
+    const contents=`# ${p.title}\n\nCampus Relay assessment simulation. This is a proposed starter, not a confirmed workshop syllabus.\n\n## Goal\n${p.intro}\n\n## Sample usage\n${p.useCase||p.intro}\n\n## Input and output\nInput: ${p.input}\nBuild: ${p.steps[2]}\nOutput: ${p.output}\n\n## First hour\n${p.steps.map(x=>`- ${x}`).join('\n')}\n\n## Starter materials\n${p.starter.map(x=>`- ${x}`).join('\n')}\n\n## Real-world precedent\n${precedent.title} (${precedent.organization}): ${precedent.url}\n${precedent.connection}\nThis source is inspiration for the workflow, not evidence that this proposed student prototype was deployed or validated.\n\n## Limitation\n${p.caution}\n\n## Continue\n${p.next}\n`;
     const JSZip=(await import('jszip')).default;
     const zip=new JSZip();zip.file('README.md',contents);
     for(const [name,value] of Object.entries(STARTER_FILES[p.id]||{})) zip.file(name,value);
     const url=URL.createObjectURL(await zip.generateAsync({type:'blob'}));const a=document.createElement('a');a.href=url;a.download=`${p.id}-starter.zip`;a.click();URL.revokeObjectURL(url);
   }
   const primary=match?.primary;
+  const precedent=primary?PRECEDENTS[primary.precedentId||CURATED_PRECEDENT[primary.id]||'study']:null;
   const suggestions=match?.options||[];
   return <main className="app-shell">
     <header className="site-header"><Link href="/" className="brand">Campus <span>Relay</span></Link><nav><span className="header-note">Assessment simulation</span>{deskToken&&<a href={`/desk/${workspaceId}#operator=${deskToken}`}>Growth desk →</a>}</nav></header>
     <div className="student-intro"><h1>Build Your First AI Project in 60 Minutes</h1><p>Free online workshop proposal for final-year engineering students. Find one small project you could explore with a supplied starter.</p><div className="offer-details"><span>Free</span><span>Online</span><span>60 minutes</span><span>Date, time and instructor to be confirmed</span></div></div>
     <section className="flow-panel" aria-label="Project matchmaker">
       <ol className="steps" aria-label="Progress"><li className={stage==='match'?'active':''}>1 <span>Matchmaker</span></li><li className={stage==='project'?'active':''}>2 <span>Project</span></li><li className={stage==='register'?'active':''}>3 <span>Register</span></li><li className={stage==='done'?'active':''}>4 <span>Take home</span></li></ol>
-      {stage==='match'&&<MatchmakerQuiz answers={answers} onChange={updateAnswers} onReveal={next=>findProject(next)} onCurated={next=>findProject(next,true)} busy={busy} ready={!!visitorId}/> }
+      {stage==='match'&&<MatchmakerQuiz workspaceId={workspaceId} visitorId={visitorId} answers={answers} onChange={updateAnswers} onReveal={next=>findProject(next)} onCurated={next=>findProject(next,true)} busy={busy} ready={!!visitorId}/> }
       {stage==='project'&&primary&&<>
         <h2>{match.mode==='ai'?'Ideas shaped from your words':'Your matched project'}</h2>
         <p className="muted">{match.mode==='ai'?'AI-generated project proposals. Pick one to inspect; verify feasibility yourself.':'Curated project examples.'} The actual workshop curriculum has not been confirmed.</p>
         <div className="suggestion-list" aria-label="Project suggestions">{suggestions.map(project=><button key={project.id} type="button" className={project.id===primary.id?'suggestion selected':'suggestion'} aria-pressed={project.id===primary.id} onClick={()=>setMatch({...match,primary:project})}><strong>{project.title}</strong><span>{project.fit||project.intro}</span></button>)}</div>
         <div className="project-layout"><div><h3>{primary.title}</h3><p>{primary.intro}</p><p className="reason">{primary.fit||match.reason}</p>{primary.showcase&&<p className="showcase"><strong>Your first-hour moment:</strong> {primary.showcase}</p>}<dl><dt>Sample input</dt><dd>{primary.input}</dd><dt>First output</dt><dd>{primary.output}</dd></dl></div><div className="starter"><h3>First-hour path</h3><ol>{primary.steps.map(s=><li key={s}>{s}</li>)}</ol><p><strong>Take home:</strong> {primary.starter.join(', ')}.</p></div></div>
+        <section className="project-story" aria-label="How this project works"><h3>How this project works</h3><ol className="project-flow"><li><span>01 · Input</span><p>{primary.input}</p></li><li><span>02 · Build</span><p>{primary.steps[2].replace(/^25 min:\s*/,'')}</p></li><li><span>03 · Output</span><p>{primary.output}</p></li></ol><div className="project-use"><h3>Picture it in use</h3><p>{primary.useCase||primary.intro}</p></div>{precedent&&<div className="project-precedent"><h3>A real-world precedent</h3><p>{precedent.connection}</p><a href={precedent.url} target="_blank" rel="noopener noreferrer">{precedent.title} — {precedent.organization} ↗</a><p className="fine">Source for a comparable workflow. This proposed student project has not been deployed or validated by that organization.</p></div>}</section>
         <p className="caution">Limitation: {primary.caution}</p>{pair&&<div className="pair-block"><h3>Build together: {pair.title}</h3><p>{pair.intro}</p><ul>{pair.roles.map(r=><li key={r}>{r}</li>)}</ul><p><strong>First-hour milestone:</strong> {pair.milestone}</p><p className="fine">{pair.caution}</p></div>}<div className="action-row between"><button className="secondary" onClick={()=>setStage('match')}>Change answers</button><div><button className="secondary" onClick={downloadStarter}>Download starter outline</button><button className="primary" onClick={startRegister}>Continue to demo registration →</button></div></div>
       </>}
       {stage==='register'&&<RegistrationChat email={email} setEmail={setEmail} year={year} setYear={setYear} ack={ack} setAck={setAck} busy={busy} onSubmit={register} onBack={()=>setStage('project')}/> }

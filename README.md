@@ -18,13 +18,13 @@ An independent, AI-assisted assessment simulation for a proposed free online wor
 4. Open that invite in a second browser profile. Choose ECE in the chat, browse curated examples and see the shared **Sensor anomaly explorer** with separate CSE/ECE roles. Register `student-b@example.com`.
 5. Return to the first browser's **Growth desk**. It should show two unique eligible demo registrations and one valid referral. The home page admin button reopens that same workspace in the first browser; a fresh browser gets labelled synthetic source data. Generate a club or academic tagged link, edit the draft partner copy, inspect forecast and test denominators, and export an anonymised CSV. Reset to empty or reseed synthetic examples as needed.
 
-To try live AI suggestions, answer the five chat prompts. Choose a branch-specific challenge or type your own project idea. The server generates three project concepts from the replies, each with a reason it fits and a concrete first-hour demonstration. These are proposals, and their ZIPs contain a generated outline rather than a supplied data bundle.
+To try live AI suggestions, answer the seven chat prompts. Choose a branch-specific challenge or type your own project idea; the interviewer then asks two AI-generated follow-up questions based on your replies. The server generates three project concepts from the full conversation. Select any concept to see an input → build → output flow, a hypothetical usage scenario, and a linked real-world precedent. The precedent is inspiration for a comparable workflow, not evidence that the proposed student project has been deployed. The ZIP contains a generated outline rather than a supplied data bundle.
 
 The operator token is in the Growth desk URL fragment and browser local storage. It is not included in student or friend URLs. Treat it as a private demo capability link.
 
 ## Implemented
 
-- Responsive conversational Matchmaker with branch-specific challenge replies, a free-text idea option, preferred build style, experience level and desired payoff. The OpenAI Responses API returns three proposals with personal fit, a first-hour demonstration and a realistic scope. Eight version-controlled curated examples are available through a separate chat action. Curated cards have sample starter ZIPs; generated cards have a README outline.
+- Responsive conversational Matchmaker with branch-specific challenges, a free-text idea route, two bounded AI-generated follow-up questions, preferred build style, experience level and desired payoff. If the interviewer is unavailable, two clearly labelled guided questions keep the path usable. The OpenAI Responses API returns three proposals with personal fit, a first-hour demonstration, hypothetical usage and a realistic scope. Every selected project displays a visual flow and one editorially checked precedent link from `src/lib/precedents.ts`. Eight version-controlled curated examples are available through a separate chat action. Curated cards have sample starter ZIPs; generated cards have a README outline.
 - The OpenAI key is server-side only, configured as a sensitive production environment variable. AI calls require a chosen challenge or typed idea and have daily visitor, workspace and IP limits. Only the idea and nonidentifying Matchmaker choices are sent to the API; the app does not store the raw idea.
 - Two direct home entries: fresh student registration and admin Growth desk. The admin button reopens the recent workspace in that browser, or creates seeded examples when no workspace exists. Persistent Neon Postgres through Vercel provides workspace isolation, expiry, seed mode, reset, record caps, basic workspace-creation throttling, foreign keys, indexes and a unique registration constraint.
 - Three-question conversational fictional `@example.com` registration; server-side HMAC digest replaces raw address after request processing. Declared 2027 engineering records count as eligible. Duplicate and self-referral attempts do not add records or referral credit.
@@ -60,7 +60,7 @@ npx playwright test
 
 ## API outline
 
-`POST /api/demo-workspaces`, `GET /api/projects`, `POST /api/recommendations`, `POST /api/visits`, `POST /api/registrations`, `POST /api/invites`, `POST /api/invites/{token}/accept`, `POST /api/links`, `GET /api/dashboard`, `GET /api/export.csv`, and `POST /api/demo-workspaces/{id}/reset`. Dashboard, CSV, links and reset require `x-operator-token`.
+`POST /api/demo-workspaces`, `GET /api/projects`, `POST /api/interview`, `POST /api/recommendations`, `POST /api/visits`, `POST /api/registrations`, `POST /api/invites`, `POST /api/invites/{token}/accept`, `POST /api/links`, `GET /api/dashboard`, `GET /api/export.csv`, and `POST /api/demo-workspaces/{id}/reset`. Dashboard, CSV, links and reset require `x-operator-token`.
 
 ## Implementation notes
 

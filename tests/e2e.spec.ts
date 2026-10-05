@@ -33,6 +33,12 @@ test('two isolated browser contexts register a cross-branch pair and update the 
     await expect(a.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
     await a.getByRole('button',{name:'Browse curated examples'}).click();
     await expect(a.getByRole('heading',{name:'Campus FAQ finder'})).toBeVisible();
+    await expect(a.getByRole('region',{name:'How this project works'}).locator('.project-flow li')).toHaveCount(3);
+    await expect(a.locator('.project-use')).toContainText('fictional campus directory');
+    await expect(a.locator('.project-precedent a')).toHaveAttribute('href','https://edu.google.com/resources/customer-stories/strategic-education-virtual-assistant/');
+    await a.locator('.suggestion').nth(1).click();
+    await expect(a.locator('.project-precedent a')).toHaveAttribute('href','https://www.faa.gov/av-info/download_SDR');
+    await expect(a.locator('.project-use')).toContainText('fictional notes');
     await a.getByRole('button',{name:/Continue to demo registration/}).click();
     await a.getByLabel('Fictional email at example.com').fill('playwright-a@example.com');
     await a.getByRole('button',{name:'Continue →'}).click();
@@ -95,20 +101,33 @@ test('server validation, attribution, concurrency and CSV disclosure',async({req
 });
 
 test('conversation adapts to branch and keeps the student’s own idea',async({page,request})=>{
+  await page.route('**/api/interview',async route=>{
+    const turn=route.request().postDataJSON().interview.turn;
+    const reply=turn===0?
+      {acknowledgement:'Shady routes could make a campus walk easier.',question:'Who would try the shaded-route map first?',mode:'ai'}:
+      {acknowledgement:'Students walking at midday give this a clear setting.',question:'What could they see on a small map after one hour?',mode:'ai'};
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(reply)});
+  });
   const created=await request.post('/api/demo-workspaces',{data:{seedMode:false}});
   const {studentUrl}=await created.json();
   await page.goto(studentUrl);
   await page.getByTestId('reply-Civil').click();
-  await expect(page.getByText('Nice. In Civil, what problem keeps catching your eye?')).toBeVisible();
+  await expect(page.getByText('In Civil, what problem keeps catching your eye?')).toBeVisible();
   await expect(page.getByTestId('reply-water-use')).toBeVisible();
   await page.getByTestId('reply-own').click();
   await page.getByLabel('What’s your idea?').fill('I want to map shady walking routes across campus.');
   await page.getByRole('button',{name:'Send →'}).click();
-  await expect(page.getByText(/I can picture “I want to map shady walking routes/)).toBeVisible();
+  await expect(page.getByText('Who would try the shaded-route map first?')).toBeVisible();
+  await page.getByLabel('Your reply').fill('Students walking between classes at midday.');
+  await page.getByRole('button',{name:'Send →'}).click();
+  await expect(page.getByText('What could they see on a small map after one hour?')).toBeVisible();
+  await page.getByLabel('Your reply').fill('A tiny map comparing two shaded routes using sample points.');
+  await page.getByRole('button',{name:'Send →'}).click();
   await page.getByTestId('reply-interactive').click();
   await page.getByTestId('reply-beginner').click();
   await page.getByTestId('reply-curious').click();
-  await expect(page.getByText(/you’re drawn to “I want to map shady walking routes/)).toBeVisible();
+  await expect(page.getByText(/I heard your idea, the people or setting/)).toBeVisible();
+  await expect(page.getByTestId('interview-mode').filter({hasText:'AI follow-up'})).toHaveCount(2);
   await expect(page.getByRole('button',{name:/Reveal my project paths/})).toBeEnabled();
 });
 
@@ -123,10 +142,16 @@ test('a typed idea produces three live AI project suggestions',async({browser,re
   await page.getByTestId('reply-own').click();
   await page.getByLabel('What’s your idea?').fill('I want to reduce water waste in a student hostel using sample meter readings.');
   await page.getByRole('button',{name:'Send →'}).click();
+  await expect(page.getByTestId('interview-mode').filter({hasText:'AI follow-up'})).toHaveCount(1,{timeout:30000});
+  await page.getByLabel('Your reply').fill('A hostel caretaker could use synthetic daily meter readings to spot waste.');
+  await page.getByRole('button',{name:'Send →'}).click();
+  await expect(page.getByTestId('interview-mode').filter({hasText:'AI follow-up'})).toHaveCount(2,{timeout:30000});
+  await page.getByLabel('Your reply').fill('Show a small chart with a suspicious spike and a clear caveat.');
+  await page.getByRole('button',{name:'Send →'}).click();
   await page.getByTestId('reply-visual').click();
   await page.getByTestId('reply-beginner').click();
   await page.getByTestId('reply-useful').click();
-  await expect(page.getByText(/I have enough to make this personal/)).toBeVisible();
+  await expect(page.getByText(/I heard your idea, the people or setting/)).toBeVisible();
   await page.getByRole('button',{name:/Reveal my project paths/}).click();
   await expect(page.getByRole('heading',{name:'Ideas shaped from your words'})).toBeVisible({timeout:30000});
   await expect(page.locator('.suggestion')).toHaveCount(3);
@@ -134,5 +159,8 @@ test('a typed idea produces three live AI project suggestions',async({browser,re
   await expect(page.locator('.showcase')).toContainText(/first-hour moment/i);
   await page.locator('.suggestion').nth(1).click();
   await expect(page.locator('.suggestion').nth(1)).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByRole('region',{name:'How this project works'}).locator('.project-flow li')).toHaveCount(3);
+  await expect(page.locator('.project-use')).not.toBeEmpty();
+  await expect(page.locator('.project-precedent a')).toHaveAttribute('href',/^https:\/\//);
   await page.close();
 });

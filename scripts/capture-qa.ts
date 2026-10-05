@@ -12,7 +12,7 @@ async function main() {
     const page=await desktop.newPage();
     await page.goto(root);
     await page.screenshot({path:path.join(dir,'home-desktop.png')});
-    await page.getByRole('button',{name:'Create a seeded workspace'}).click();
+    await page.getByRole('button',{name:/Try student registration/}).click();
     await page.getByRole('button',{name:'Browse curated examples'}).waitFor({state:'visible'});
     await expect(page.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
     await page.screenshot({path:path.join(dir,'student-desktop.png')});
@@ -20,9 +20,10 @@ async function main() {
     await page.getByRole('button',{name:'Browse curated examples'}).click();
     await page.getByRole('button',{name:/Continue to demo registration/}).click();
     await page.screenshot({path:path.join(dir,'registration-desktop.png')});
-    await page.getByRole('link',{name:/Growth desk/}).click();
-    await page.getByText('Channel performance').waitFor();
-    await page.screenshot({path:path.join(dir,'desk-desktop.png')});
+    const admin=await desktop.newPage();await admin.goto(root);
+    await admin.getByRole('button',{name:/Explore admin Growth desk/}).click();
+    await admin.getByText('Channel performance').waitFor();
+    await admin.screenshot({path:path.join(dir,'desk-desktop.png')});
     const mobile=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
     const phone=await mobile.newPage();await phone.goto(studentUrl);
     await expect(phone.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
@@ -31,7 +32,7 @@ async function main() {
     await phone.getByRole('button',{name:/Continue to demo registration/}).click();
     await phone.screenshot({path:path.join(dir,'registration-mobile.png'),fullPage:true});
     const overflow=await phone.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
-    const deskOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
+    const deskOverflow=await admin.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
     console.log(JSON.stringify({screenshots:['home-desktop.png','student-desktop.png','registration-desktop.png','desk-desktop.png','student-mobile.png','registration-mobile.png'],mobileOverflow:overflow,deskOverflow}));
     await desktop.close();await mobile.close();
   } finally {await browser.close()}

@@ -1,5 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+test('home has separate student and seeded admin demo entries',async({browser})=>{
+  const student=await browser.newContext(),admin=await browser.newContext();
+  try {
+    const a=await student.newPage();await a.goto('/');
+    await expect(a.getByRole('button',{name:/Try student registration/})).toBeVisible();
+    await expect(a.getByRole('button',{name:/Explore admin Growth desk/})).toBeVisible();
+    await a.getByRole('button',{name:/Try student registration/}).click();
+    await expect(a).toHaveURL(/\/w\/[a-f0-9]+/);
+    await expect(a.getByRole('heading',{name:'Let’s find your project'})).toBeVisible();
+    const b=await admin.newPage();await b.goto('/');
+    await b.getByRole('button',{name:/Explore admin Growth desk/}).click();
+    await expect(b).toHaveURL(/\/desk\/[a-f0-9]+/);
+    await expect(b.getByRole('heading',{name:'Channel performance'})).toBeVisible();
+    await expect(b.getByText('SIMULATED DATA / NO CAMPAIGN EXECUTED')).toBeVisible();
+    await expect(b.locator('.metrics > div').first()).toContainText('5');
+  } finally {await student.close();await admin.close()}
+});
+
 test('two isolated browser contexts register a cross-branch pair and update the shared desk',async({browser,request})=>{
   const created=await request.post('/api/demo-workspaces',{data:{seedMode:false}});
   expect(created.status()).toBe(201);

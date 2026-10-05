@@ -12,6 +12,8 @@ test('two isolated browser contexts register a cross-branch pair and update the 
     await expect(a.getByRole('heading',{name:'Campus FAQ finder'})).toBeVisible();
     await a.getByRole('button',{name:/Continue to demo registration/}).click();
     await a.getByLabel('Fictional email at example.com').fill('playwright-a@example.com');
+    await a.getByRole('button',{name:'Continue →'}).click();
+    await a.getByRole('button',{name:'2027'}).click();
     await a.getByLabel(/I understand this is a simulation/).check();
     await a.getByRole('button',{name:/Create demo receipt/}).click();
     await expect(a.getByRole('heading',{name:'Demo receipt created'})).toBeVisible();
@@ -24,6 +26,8 @@ test('two isolated browser contexts register a cross-branch pair and update the 
     await expect(b.getByText(/ECE: interpret signals and baseline/)).toBeVisible();
     await b.getByRole('button',{name:/Continue to demo registration/}).click();
     await b.getByLabel('Fictional email at example.com').fill('playwright-b@example.com');
+    await b.getByRole('button',{name:'Continue →'}).click();
+    await b.getByRole('button',{name:'2027'}).click();
     await b.getByLabel(/I understand this is a simulation/).check();
     await b.getByRole('button',{name:/Create demo receipt/}).click();
     await expect(b.getByRole('heading',{name:'Demo receipt created'})).toBeVisible();

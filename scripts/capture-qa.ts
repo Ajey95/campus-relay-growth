@@ -17,6 +17,9 @@ async function main() {
     await expect(page.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
     await page.screenshot({path:path.join(dir,'student-desktop.png')});
     const studentUrl=page.url();
+    await page.getByRole('button',{name:'Browse curated examples'}).click();
+    await page.getByRole('button',{name:/Continue to demo registration/}).click();
+    await page.screenshot({path:path.join(dir,'registration-desktop.png')});
     await page.getByRole('link',{name:/Growth desk/}).click();
     await page.getByText('Channel performance').waitFor();
     await page.screenshot({path:path.join(dir,'desk-desktop.png')});
@@ -24,9 +27,12 @@ async function main() {
     const phone=await mobile.newPage();await phone.goto(studentUrl);
     await expect(phone.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
     await phone.screenshot({path:path.join(dir,'student-mobile.png'),fullPage:true});
+    await phone.getByRole('button',{name:'Browse curated examples'}).click();
+    await phone.getByRole('button',{name:/Continue to demo registration/}).click();
+    await phone.screenshot({path:path.join(dir,'registration-mobile.png'),fullPage:true});
     const overflow=await phone.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
     const deskOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
-    console.log(JSON.stringify({screenshots:['home-desktop.png','student-desktop.png','desk-desktop.png','student-mobile.png'],mobileOverflow:overflow,deskOverflow}));
+    console.log(JSON.stringify({screenshots:['home-desktop.png','student-desktop.png','registration-desktop.png','desk-desktop.png','student-mobile.png','registration-mobile.png'],mobileOverflow:overflow,deskOverflow}));
     await desktop.close();await mobile.close();
   } finally {await browser.close()}
 }

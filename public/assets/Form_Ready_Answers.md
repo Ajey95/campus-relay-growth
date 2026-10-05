@@ -20,7 +20,7 @@ These are proposed tests. The app shows only fictional demo records and illustra
 
 ## What changed between first idea and final solution?
 
-The first idea was a generic workshop page and broad promotion. The final Campus Relay asset lets a student type their own idea and compare three AI-generated one-hour project proposals before fictional registration. Curated examples remain available without free text. It adds an optional cross-department invite and tracks unique eligible registrations by first-touch source across community, academic and creator links.
+The first idea was a generic workshop page and broad promotion. The final Campus Relay asset asks five short conversational questions, including a branch-specific challenge or the student’s own idea, then reveals three AI-generated one-hour project proposals with personal-fit reasons. Curated examples remain available through a separate action. It adds an optional cross-department invite and tracks unique eligible registrations by first-touch source across community, academic and creator links.
 
 ## What would another 24 hours improve?
 

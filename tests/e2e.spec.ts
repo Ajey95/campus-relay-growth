@@ -7,9 +7,8 @@ test('two isolated browser contexts register a cross-branch pair and update the 
   const first=await browser.newContext(),second=await browser.newContext();
   try {
     const a=await first.newPage();await a.goto(studentUrl);
-    await a.getByLabel('Text').check();
-    await expect(a.getByRole('button',{name:/Explore curated projects/})).toBeEnabled();
-    await a.getByRole('button',{name:/Explore curated projects/}).click();
+    await expect(a.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
+    await a.getByRole('button',{name:'Browse curated examples'}).click();
     await expect(a.getByRole('heading',{name:'Campus FAQ finder'})).toBeVisible();
     await a.getByRole('button',{name:/Continue to demo registration/}).click();
     await a.getByLabel('Fictional email at example.com').fill('playwright-a@example.com');
@@ -19,9 +18,8 @@ test('two isolated browser contexts register a cross-branch pair and update the 
     await a.getByRole('button',{name:/Invite a friend to build together/}).click();
     const inviteUrl=await a.getByLabel('Copy this friend link').inputValue();
     const b=await second.newPage();await b.goto(inviteUrl);
-    await expect(b.getByRole('button',{name:/Explore curated projects/})).toBeEnabled();
-    await b.getByLabel('Engineering branch').selectOption('ECE');
-    await b.getByRole('button',{name:/Explore curated projects/}).click();
+    await b.getByTestId('reply-ECE').click();
+    await b.getByRole('button',{name:'Browse curated examples'}).click();
     await expect(b.getByRole('heading',{name:'Build together: Sensor anomaly explorer'})).toBeVisible();
     await expect(b.getByText(/ECE: interpret signals and baseline/)).toBeVisible();
     await b.getByRole('button',{name:/Continue to demo registration/}).click();
@@ -69,6 +67,24 @@ test('server validation, attribution, concurrency and CSV disclosure',async({req
   expect(text).not.toContain('=sample');
 });
 
+test('conversation adapts to branch and keeps the student’s own idea',async({page,request})=>{
+  const created=await request.post('/api/demo-workspaces',{data:{seedMode:false}});
+  const {studentUrl}=await created.json();
+  await page.goto(studentUrl);
+  await page.getByTestId('reply-Civil').click();
+  await expect(page.getByText('Nice. In Civil, what problem keeps catching your eye?')).toBeVisible();
+  await expect(page.getByTestId('reply-water-use')).toBeVisible();
+  await page.getByTestId('reply-own').click();
+  await page.getByLabel('What’s your idea?').fill('I want to map shady walking routes across campus.');
+  await page.getByRole('button',{name:'Send →'}).click();
+  await expect(page.getByText(/I can picture “I want to map shady walking routes/)).toBeVisible();
+  await page.getByTestId('reply-interactive').click();
+  await page.getByTestId('reply-beginner').click();
+  await page.getByTestId('reply-curious').click();
+  await expect(page.getByText(/you’re drawn to “I want to map shady walking routes/)).toBeVisible();
+  await expect(page.getByRole('button',{name:/Reveal my project paths/})).toBeEnabled();
+});
+
 test('a typed idea produces three live AI project suggestions',async({browser,request})=>{
   test.skip(!process.env.TEST_AI_LIVE,'Requires a deployed OPENAI_API_KEY and makes one paid API call.');
   const created=await request.post('/api/demo-workspaces',{data:{seedMode:false}});
@@ -76,12 +92,19 @@ test('a typed idea produces three live AI project suggestions',async({browser,re
   const {studentUrl}=await created.json();
   const page=await browser.newPage();
   await page.goto(studentUrl);
-  await page.getByLabel('Engineering branch').selectOption('Mechanical');
-  await page.getByLabel('Your own project idea').fill('I want to reduce water waste in a student hostel using sample meter readings.');
-  await page.getByRole('button',{name:/Generate project ideas/}).click();
+  await page.getByTestId('reply-Mechanical').click();
+  await page.getByTestId('reply-own').click();
+  await page.getByLabel('What’s your idea?').fill('I want to reduce water waste in a student hostel using sample meter readings.');
+  await page.getByRole('button',{name:'Send →'}).click();
+  await page.getByTestId('reply-visual').click();
+  await page.getByTestId('reply-beginner').click();
+  await page.getByTestId('reply-useful').click();
+  await expect(page.getByText(/I have enough to make this personal/)).toBeVisible();
+  await page.getByRole('button',{name:/Reveal my project paths/}).click();
   await expect(page.getByRole('heading',{name:'Ideas shaped from your words'})).toBeVisible({timeout:30000});
   await expect(page.locator('.suggestion')).toHaveCount(3);
   await expect(page.locator('.suggestion-list')).toContainText(/water|meter|hostel/i);
+  await expect(page.locator('.showcase')).toContainText(/first-hour moment/i);
   await page.locator('.suggestion').nth(1).click();
   await expect(page.locator('.suggestion').nth(1)).toHaveAttribute('aria-pressed','true');
   await page.close();

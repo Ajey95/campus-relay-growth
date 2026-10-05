@@ -21,7 +21,7 @@ This log describes work done by the Codex coding agent under the candidate's ins
 
 **Change/rejection:** The agent rejected that first ranking, added branch specificity and skill-level fit to the score, and reran the browser test. CSE + beginner + text now returns “Campus FAQ finder”; Mechanical + beginner + data returns “Maintenance note explorer.” The downloadable starters contain actual small sample files. Project claims remain examples until a workshop organiser confirms the syllabus.
 
-**Shipped result:** `src/lib/catalog.ts`, `src/lib/starters.ts`, and the student Matchmaker. After the candidate asked for students to type their own ideas, the agent added a separate server-side OpenAI path in `src/lib/ai-ideas.ts`. It generates three labelled proposals from free text; blank ideas still use the corrected curated ranker. Live API and browser checks confirmed the new path. The generated starter is an outline; curated starters retain sample files.
+**Shipped result:** `src/lib/catalog.ts`, `src/lib/starters.ts`, and the student Matchmaker. After the candidate asked for students to type their own ideas and then for a conversational flow, the agent built a five-question chat with branch-specific choices and a free-text route. A server-side OpenAI path in `src/lib/ai-ideas.ts` turns the replies into three labelled proposals with a personal-fit explanation and first-hour demonstration. A separate action uses the corrected curated ranker. Local browser checks covered the adaptive prompts, and a production browser check confirmed the live AI reveal. The generated starter is an outline; curated starters retain sample files.
 
 ## 3. Dashboard and experiment judgement
 

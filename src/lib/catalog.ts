@@ -1,13 +1,15 @@
+import { BUILD_STYLES, CHALLENGES, BuildStyle } from '@/lib/quiz';
+
 export const BRANCHES = ['CSE', 'IT', 'ECE', 'EEE', 'Mechanical', 'Civil'] as const;
 export const INTERESTS = ['text', 'data', 'images', 'sensors', 'community'] as const;
 export type Branch = typeof BRANCHES[number];
 export type Interest = typeof INTERESTS[number];
-export type Answers = { branch: Branch; level: 'beginner' | 'intermediate'; interests: Interest[]; outcome: 'interview' | 'useful' | 'curious'; idea?: string };
+export type Answers = { branch: Branch; level: 'beginner' | 'intermediate'; interests: Interest[]; outcome: 'interview' | 'useful' | 'curious'; idea?: string; challenge?: string; buildStyle?: BuildStyle };
 
 export type Project = {
   id: string; title: string; branches: Branch[]; interests: Interest[]; bestFor:'beginner'|'intermediate';
   intro: string; input: string; output: string; caution: string;
-  steps: [string, string, string, string]; starter: string[]; next: string; sampleCsv?: string; generated?: boolean;
+  steps: [string, string, string, string]; starter: string[]; next: string; generated?: boolean; fit?: string; showcase?: string;
 };
 
 export const PROJECTS: Project[] = [
@@ -36,7 +38,11 @@ export function pairProject(a: Answers, b: Answers): PairProject {
 export function validAnswers(value: unknown): value is Answers {
   if (!value || typeof value !== 'object') return false;
   const a=value as Partial<Answers>;
-  return BRANCHES.includes(a.branch as Branch) && ['beginner','intermediate'].includes(a.level || '') && Array.isArray(a.interests) && a.interests.length <= 2 && a.interests.every(i=>INTERESTS.includes(i)) && ['interview','useful','curious'].includes(a.outcome || '') && (a.idea===undefined || (typeof a.idea==='string' && a.idea.length<=240 && !/[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(a.idea)));
+  const validIdea=a.idea===undefined || (typeof a.idea==='string' && a.idea.length<=240 && !/[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(a.idea));
+  const validChallenge=a.challenge===undefined || (typeof a.challenge==='string' && !!a.branch && (a.challenge==='own' || CHALLENGES[a.branch]?.some(c=>c.id===a.challenge)));
+  const validStyle=a.buildStyle===undefined || BUILD_STYLES.some(s=>s.id===a.buildStyle);
+  const ownIdeaReady=a.challenge!=='own' || (typeof a.idea==='string' && a.idea.trim().length>=6);
+  return BRANCHES.includes(a.branch as Branch) && ['beginner','intermediate'].includes(a.level || '') && Array.isArray(a.interests) && a.interests.length <= 2 && a.interests.every(i=>INTERESTS.includes(i)) && ['interview','useful','curious'].includes(a.outcome || '') && validIdea && validChallenge && validStyle && ownIdeaReady;
 }
 export function recommend(a: Answers) {
   return [...PROJECTS].sort((x,y)=> {

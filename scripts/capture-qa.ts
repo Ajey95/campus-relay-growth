@@ -13,8 +13,8 @@ async function main() {
     await page.goto(root);
     await page.screenshot({path:path.join(dir,'home-desktop.png')});
     await page.getByRole('button',{name:'Create a seeded workspace'}).click();
-    await page.getByRole('button',{name:/Explore curated projects/}).waitFor({state:'visible'});
-    await expect(page.getByRole('button',{name:/Explore curated projects/})).toBeEnabled();
+    await page.getByRole('button',{name:'Browse curated examples'}).waitFor({state:'visible'});
+    await expect(page.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
     await page.screenshot({path:path.join(dir,'student-desktop.png')});
     const studentUrl=page.url();
     await page.getByRole('link',{name:/Growth desk/}).click();
@@ -22,7 +22,7 @@ async function main() {
     await page.screenshot({path:path.join(dir,'desk-desktop.png')});
     const mobile=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
     const phone=await mobile.newPage();await phone.goto(studentUrl);
-    await expect(phone.getByRole('button',{name:/Explore curated projects/})).toBeEnabled();
+    await expect(phone.getByRole('button',{name:'Browse curated examples'})).toBeEnabled();
     await phone.screenshot({path:path.join(dir,'student-mobile.png'),fullPage:true});
     const overflow=await phone.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
     const deskOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);

@@ -9,6 +9,11 @@ test('home has separate student and seeded admin demo entries',async({browser})=
     await a.getByRole('button',{name:/Try student registration/}).click();
     await expect(a).toHaveURL(/\/w\/[a-f0-9]+/);
     await expect(a.getByRole('heading',{name:'Let’s find your project'})).toBeVisible();
+    const studentWorkspaceId=new URL(a.url()).pathname.split('/').pop();
+    await a.goto('/');
+    await a.getByRole('button',{name:/Explore admin Growth desk/}).click();
+    await expect(a).toHaveURL(new RegExp(`/desk/${studentWorkspaceId}`));
+    await expect(a.getByRole('heading',{name:'Channel performance'})).toBeVisible();
     const b=await admin.newPage();await b.goto('/');
     await b.getByRole('button',{name:/Explore admin Growth desk/}).click();
     await expect(b).toHaveURL(/\/desk\/[a-f0-9]+/);

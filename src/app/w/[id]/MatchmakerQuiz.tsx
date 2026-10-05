@@ -89,7 +89,7 @@ export default function MatchmakerQuiz({workspaceId,visitorId,answers,onChange,o
     <div className="chat-heading"><div><h2>Let’s find your project</h2><p>Tell me what you’re imagining. I’ll ask two follow-ups, then shape three first builds around your replies.</p></div><span>{step+1} of 7</span></div>
     <div className="chat-progress" aria-label={`Question ${step+1} of 7`}>{[0,1,2,3,4,5,6].map(i=><span key={i} className={i<=step?'active':''}/>)}</div>
     <div ref={conversation} className="chat-window" aria-label="Project discovery conversation" aria-live="polite">
-      {assistantBubble('Hi! There’s no perfect answer here. Let’s find a project that feels like yours.','intro','Campus Relay')}
+      {assistantBubble('Hi! Let’s find a project starter that could make the proposed free 60-minute AI workshop worth your time. These are previews, not a confirmed syllabus.','intro','Campus Relay')}
       {assistantBubble('First, which engineering world feels most like yours?','branch-question')}
       {step>=1&&<>{userBubble(answers.branch,'branch-reply')}{assistantBubble(`In ${answers.branch}, what problem keeps catching your eye?`,'spark-question')}</>}
       {step>=2&&<>{userBubble(spark,'spark-reply')}{assistantBubble(followUps[0]?.acknowledgement,'first-ack')}{assistantBubble(followUps[0]?.question,'first-followup',followUps[0]?.mode==='ai'?'AI follow-up':'Guided follow-up')}</>}

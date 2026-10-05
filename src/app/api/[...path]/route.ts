@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
 import { BRANCHES, PROJECTS, Answers, pairProject, recommend, validAnswers } from '@/lib/catalog';
+import { generateIdeas } from '@/lib/ai-ideas';
 import { db, digest, emailDigest, ensureSchema, id, logEvent, operator, token, workspace } from '@/lib/db';
 
 export const runtime='nodejs';
@@ -82,10 +83,24 @@ export async function POST(req:NextRequest,ctx:Context) {
       if(!validAnswers(data.answers)) return error(422,'invalid_answers','Choose a supported engineering branch, level and up to two interests.');
       const visitor=await sql`SELECT id FROM visitors WHERE id=${visitorId} AND workspace_id=${workspaceId}`;
       if(!visitor.length) return error(404,'visitor_missing','Start a demo visit before requesting a project.');
-      const answers=data.answers as Answers, results=recommend(answers);
+      const answers=data.answers as Answers;
+      const hasIdea=!!answers.idea?.trim();
+      if(hasIdea) {
+        if(!process.env.OPENAI_API_KEY) return error(503,'ai_unavailable','AI suggestions are unavailable. Clear your idea to explore curated projects.');
+        const day=Math.floor(Date.now()/86400000);
+        await sql`DELETE FROM ai_daily_limits WHERE day_bucket<${day-1}`;
+        const ip=req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';
+        for(const [scope,key,limit] of [['visitor',visitorId,3],['workspace',workspaceId,50],['ip',ip,30]] as const) {
+          const counter=await sql`INSERT INTO ai_daily_limits(scope,key_digest,day_bucket,requests) VALUES(${scope},${digest(key)},${day},1) ON CONFLICT(scope,key_digest,day_bucket) DO UPDATE SET requests=ai_daily_limits.requests+1 RETURNING requests`;
+          if(Number(counter[0].requests)>limit) return error(429,'ai_limit','This demo has reached its daily AI suggestion limit. Try a curated project.');
+        }
+      }
+      let results;
+      try { results=hasIdea?await generateIdeas(answers):recommend(answers); }
+      catch(e) { console.error('AI suggestion failure',e instanceof Error?e.name:'unknown'); return error(503,'ai_unavailable','AI suggestions are temporarily unavailable. Clear your idea to explore curated projects.'); }
       await sql`INSERT INTO recommendations(id,visitor_id,template_id,branch,level,interests,outcome) VALUES(${id()},${visitorId},${results[0].id},${answers.branch},${answers.level},${JSON.stringify(answers.interests)}::jsonb,${answers.outcome})`;
-      await logEvent(workspaceId,visitorId,'recommendation',{templateId:results[0].id});
-      return NextResponse.json({primary:results[0],alternatives:results.slice(1),reason:`Fits ${answers.branch}, your ${answers.level} level and ${answers.interests.length?answers.interests.join(' + '):'starter'} interest. The first hour has a defined input, output and limitation.`});
+      await logEvent(workspaceId,visitorId,'recommendation',{templateId:results[0].id,mode:hasIdea?'ai':'curated'});
+      return NextResponse.json({primary:results[0],alternatives:results.slice(1),mode:hasIdea?'ai':'curated',reason:hasIdea?'Generated from your idea, branch and skill level. Review the scope and limitation before building.':`Fits ${answers.branch}, your ${answers.level} level and ${answers.interests.length?answers.interests.join(' + '):'starter'} interest. The first hour has a defined input, output and limitation.`});
     }
     if(path[0]==='events' && path.length===1) {
       const workspaceId=plain(data.workspaceId), visitorId=plain(data.visitorId);

@@ -84,6 +84,10 @@ export function ensureSchema() {
       scope text NOT NULL, key_digest text NOT NULL, minute_bucket bigint NOT NULL,
       requests integer NOT NULL DEFAULT 1, PRIMARY KEY(scope,key_digest,minute_bucket)
     )`;
+    await sql`CREATE TABLE IF NOT EXISTS ai_daily_limits (
+      scope text NOT NULL, key_digest text NOT NULL, day_bucket bigint NOT NULL,
+      requests integer NOT NULL DEFAULT 1, PRIMARY KEY(scope,key_digest,day_bucket)
+    )`;
   })().catch(error=>{initialized=undefined;throw error});
   return initialized;
 }

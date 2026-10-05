@@ -2,12 +2,12 @@ export const BRANCHES = ['CSE', 'IT', 'ECE', 'EEE', 'Mechanical', 'Civil'] as co
 export const INTERESTS = ['text', 'data', 'images', 'sensors', 'community'] as const;
 export type Branch = typeof BRANCHES[number];
 export type Interest = typeof INTERESTS[number];
-export type Answers = { branch: Branch; level: 'beginner' | 'intermediate'; interests: Interest[]; outcome: 'interview' | 'useful' | 'curious' };
+export type Answers = { branch: Branch; level: 'beginner' | 'intermediate'; interests: Interest[]; outcome: 'interview' | 'useful' | 'curious'; idea?: string };
 
 export type Project = {
   id: string; title: string; branches: Branch[]; interests: Interest[]; bestFor:'beginner'|'intermediate';
   intro: string; input: string; output: string; caution: string;
-  steps: [string, string, string, string]; starter: string[]; next: string;
+  steps: [string, string, string, string]; starter: string[]; next: string; sampleCsv?: string; generated?: boolean;
 };
 
 export const PROJECTS: Project[] = [
@@ -36,7 +36,7 @@ export function pairProject(a: Answers, b: Answers): PairProject {
 export function validAnswers(value: unknown): value is Answers {
   if (!value || typeof value !== 'object') return false;
   const a=value as Partial<Answers>;
-  return BRANCHES.includes(a.branch as Branch) && ['beginner','intermediate'].includes(a.level || '') && Array.isArray(a.interests) && a.interests.length <= 2 && a.interests.every(i=>INTERESTS.includes(i)) && ['interview','useful','curious'].includes(a.outcome || '');
+  return BRANCHES.includes(a.branch as Branch) && ['beginner','intermediate'].includes(a.level || '') && Array.isArray(a.interests) && a.interests.length <= 2 && a.interests.every(i=>INTERESTS.includes(i)) && ['interview','useful','curious'].includes(a.outcome || '') && (a.idea===undefined || (typeof a.idea==='string' && a.idea.length<=240 && !/[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(a.idea)));
 }
 export function recommend(a: Answers) {
   return [...PROJECTS].sort((x,y)=> {

@@ -12,7 +12,7 @@ The landing route creates an isolated fictional workspace. The separate Growth d
 
 ## Your 3 Tests
 
-1. **Personalised project preview** — Hypothesis: branch/level/interest matching raises sign-up intent. Test: generic workshop summary (A) versus curated Matchmaker preview (B), with stable assignment before exposure. Metric: unique eligible registrations / unique exposed visitors in each arm; monitor preview-to-form drop-off.
+1. **Personalised project preview** — Hypothesis: a branch/level/student-written idea match raises sign-up intent. Test: generic workshop summary (A) versus Matchmaker preview (B), with stable assignment before exposure. Metric: unique eligible registrations / unique exposed visitors in each arm; monitor preview-to-form drop-off.
 2. **Concrete take-home value** — Hypothesis: a tangible starter path raises perceived value. Test: broad project description (A) versus actual starter bundle and next steps (B). Metric: unique eligible registrations / unique exposed visitors in each arm; monitor expectation clarity.
 3. **Cross-branch friend invite** — Hypothesis: distinct roles bring more valid peer registrations. Test: simple optional invite (A) versus two-engineering-branch shared-project preview (B), offered after the original registration. Metric: new eligible referred registrations / original registrants offered each arm; separately report invite opens and invalid/duplicate attempts.
 
@@ -20,7 +20,7 @@ These are proposed tests. The app shows only fictional demo records and illustra
 
 ## What changed between first idea and final solution?
 
-The first idea was a generic workshop page and broad promotion. The final Campus Relay asset gives a student a curated one-hour project preview before fictional registration, adds an optional cross-department invite, and tracks unique eligible registrations by first-touch source across community, academic and creator links. That makes the message more relevant and the proposed campaign measurable.
+The first idea was a generic workshop page and broad promotion. The final Campus Relay asset lets a student type their own idea and compare three AI-generated one-hour project proposals before fictional registration. Curated examples remain available without free text. It adds an optional cross-department invite and tracks unique eligible registrations by first-touch source across community, academic and creator links.
 
 ## What would another 24 hours improve?
 

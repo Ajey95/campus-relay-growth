@@ -7,8 +7,9 @@ test('two isolated browser contexts register a cross-branch pair and update the 
   const first=await browser.newContext(),second=await browser.newContext();
   try {
     const a=await first.newPage();await a.goto(studentUrl);
-    await expect(a.getByRole('button',{name:'Find my project'})).toBeEnabled();
-    await a.getByRole('button',{name:'Find my project'}).click();
+    await a.getByLabel('Text').check();
+    await expect(a.getByRole('button',{name:/Explore curated projects/})).toBeEnabled();
+    await a.getByRole('button',{name:/Explore curated projects/}).click();
     await expect(a.getByRole('heading',{name:'Campus FAQ finder'})).toBeVisible();
     await a.getByRole('button',{name:/Continue to demo registration/}).click();
     await a.getByLabel('Fictional email at example.com').fill('playwright-a@example.com');
@@ -18,9 +19,9 @@ test('two isolated browser contexts register a cross-branch pair and update the 
     await a.getByRole('button',{name:/Invite a friend to build together/}).click();
     const inviteUrl=await a.getByLabel('Copy this friend link').inputValue();
     const b=await second.newPage();await b.goto(inviteUrl);
-    await expect(b.getByRole('button',{name:'Find my project'})).toBeEnabled();
+    await expect(b.getByRole('button',{name:/Explore curated projects/})).toBeEnabled();
     await b.getByLabel('Engineering branch').selectOption('ECE');
-    await b.getByRole('button',{name:'Find my project'}).click();
+    await b.getByRole('button',{name:/Explore curated projects/}).click();
     await expect(b.getByRole('heading',{name:'Build together: Sensor anomaly explorer'})).toBeVisible();
     await expect(b.getByText(/ECE: interpret signals and baseline/)).toBeVisible();
     await b.getByRole('button',{name:/Continue to demo registration/}).click();
@@ -66,4 +67,22 @@ test('server validation, attribution, concurrency and CSV disclosure',async({req
   expect(text).toContain('assessment simulation');
   expect(text).not.toContain('same@example.com');
   expect(text).not.toContain('=sample');
+});
+
+test('a typed idea produces three live AI project suggestions',async({browser,request})=>{
+  test.skip(!process.env.TEST_AI_LIVE,'Requires a deployed OPENAI_API_KEY and makes one paid API call.');
+  const created=await request.post('/api/demo-workspaces',{data:{seedMode:false}});
+  expect(created.status()).toBe(201);
+  const {studentUrl}=await created.json();
+  const page=await browser.newPage();
+  await page.goto(studentUrl);
+  await page.getByLabel('Engineering branch').selectOption('Mechanical');
+  await page.getByLabel('Your own project idea').fill('I want to reduce water waste in a student hostel using sample meter readings.');
+  await page.getByRole('button',{name:/Generate project ideas/}).click();
+  await expect(page.getByRole('heading',{name:'Ideas shaped from your words'})).toBeVisible({timeout:30000});
+  await expect(page.locator('.suggestion')).toHaveCount(3);
+  await expect(page.locator('.suggestion-list')).toContainText(/water|meter|hostel/i);
+  await page.locator('.suggestion').nth(1).click();
+  await expect(page.locator('.suggestion').nth(1)).toHaveAttribute('aria-pressed','true');
+  await page.close();
 });

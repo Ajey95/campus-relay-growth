@@ -18,11 +18,14 @@ An independent, AI-assisted assessment simulation for a proposed free online wor
 4. Open that invite in a second browser profile. Choose ECE and see the shared **Sensor anomaly explorer** with separate CSE/ECE roles. Register `student-b@example.com`.
 5. Return to the first browser's **Growth desk**. It should show two unique eligible demo registrations and one valid referral. Generate a club or academic tagged link, edit the draft partner copy, inspect forecast and test denominators, and export an anonymised CSV. Reset to empty or reseed synthetic examples as needed.
 
+To try live AI suggestions, type your own project idea in the Matchmaker. The server generates three project concepts and first-hour paths from that text, branch, level and goal. These are proposals, and their ZIPs contain a generated outline rather than a supplied data bundle.
+
 The operator token is in the Growth desk URL fragment and browser local storage. It is not included in student or friend URLs. Treat it as a private demo capability link.
 
 ## Implemented
 
-- Responsive student Matchmaker with six controlled engineering branches, two skill levels, up to two interests, eight version-controlled curated project cards, pair recommendations and actual sample starter ZIPs.
+- Responsive student Matchmaker with free-text ideas sent to the OpenAI Responses API, three generated project suggestions, optional interest tags, and eight version-controlled curated examples when the idea field is blank. Curated cards have sample starter ZIPs; generated cards have a README outline.
+- The OpenAI key is server-side only, configured as a sensitive production environment variable. AI calls require an explicit idea and have daily visitor, workspace and IP limits. Only the idea and nonidentifying Matchmaker choices are sent to the API; the app does not store the raw idea.
 - Persistent Neon Postgres through Vercel. Workspace isolation, expiry, seed mode, reset, record caps, basic workspace-creation throttling, foreign keys, indexes and unique registration constraint.
 - Fictional `@example.com` registration only; server-side HMAC digest replaces raw address after request processing. Declared 2027 engineering records count as eligible. Duplicate and self-referral attempts do not add records or referral credit.
 - Opaque campaign and invite links, first-touch primary attribution, last touch and referral assist, a separate operator-scoped Growth desk and CSV export with formula-safe escaping.
@@ -39,7 +42,7 @@ The operator token is in the Growth desk URL fragment and browser local storage.
 
 ## Local development
 
-Requires Node.js 22 or newer and a Postgres database. The deployed project uses a free Neon resource connected to Vercel. Set `DATABASE_URL` and a unique `EMAIL_HASH_SECRET` in a local `.env.local`; never commit either value. Then:
+Requires Node.js 22 or newer and a Postgres database. The deployed project uses a free Neon resource connected to Vercel. Set `DATABASE_URL`, a unique `EMAIL_HASH_SECRET`, and `OPENAI_API_KEY` in a local `.env.local`; never commit their values. Without the OpenAI key, the curated Matchmaker still works. Then:
 
 ```bash
 npm ci

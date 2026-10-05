@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Campus Relay
 
-## Getting Started
+An independent, AI-assisted assessment simulation for a proposed free online workshop, **“Build Your First AI Project in 60 Minutes.”** It demonstrates how a seven-day campaign might pursue 500 unique final-year engineering registrations with a ₹2,000 ceiling. No campaign was run and no real workshop registration is created.
 
-First, run the development server:
+**Public demo:** https://campus-relay-growth.vercel.app
+
+**Growth plan:** https://campus-relay-growth.vercel.app/assets/Campus_Relay_Growth_Plan.pdf
+
+**AI worklog:** https://campus-relay-growth.vercel.app/assets/AI_Worklog.md
+
+## Ninety-second walkthrough
+
+1. Open the public link signed out and create an **empty workspace**. This creates a seven-day isolated database scope and saves a separate operator link in the current browser.
+2. Choose CSE, beginner and text. View the **Campus FAQ finder** project and download its ZIP; the archive includes a README, sample FAQ and test questions.
+3. Continue to fictional registration using `student-a@example.com` and graduation year 2027. No message is sent. Copy the friend invite link.
+4. Open that invite in a second browser profile. Choose ECE and see the shared **Sensor anomaly explorer** with separate CSE/ECE roles. Register `student-b@example.com`.
+5. Return to the first browser's **Growth desk**. It should show two unique eligible demo registrations and one valid referral. Generate a club or academic tagged link, edit the draft partner copy, inspect forecast and test denominators, and export an anonymised CSV. Reset to empty or reseed synthetic examples as needed.
+
+The operator token is in the Growth desk URL fragment and browser local storage. It is not included in student or friend URLs. Treat it as a private demo capability link.
+
+## Implemented
+
+- Responsive student Matchmaker with six controlled engineering branches, two skill levels, up to two interests, eight version-controlled curated project cards, pair recommendations and actual sample starter ZIPs.
+- Persistent Neon Postgres through Vercel. Workspace isolation, expiry, seed mode, reset, record caps, basic workspace-creation throttling, foreign keys, indexes and unique registration constraint.
+- Fictional `@example.com` registration only; server-side HMAC digest replaces raw address after request processing. Declared 2027 engineering records count as eligible. Duplicate and self-referral attempts do not add records or referral credit.
+- Opaque campaign and invite links, first-touch primary attribution, last touch and referral assist, a separate operator-scoped Growth desk and CSV export with formula-safe escaping.
+- Editable hypothetical forecast and budget, three proposed tests with stable illustrative assignment records and exposure denominators, editable partner drafts. The app sends no messages.
+- Automated integration/browser checks in two isolated Chrome contexts; see `tests/e2e.spec.ts`.
+
+## Proposed or unverified
+
+- The 500 target, 610 gross forecast, 18% reduction, channel yields and ₹2,000 spend are planning assumptions. Live demo counts are fictional, and seed rows are marked synthetic.
+- The official workshop date, instructor, exact curriculum, certificate or other benefit is unknown. Project cards are possible starters, not an approved NxtWave syllabus.
+- No real partner agreed, no student outreach or campaign occurred, and no A/B winner or significance claim can be drawn from demo data.
+- Fictional email uniqueness is not human verification. Production anti-fraud, deliverability, consent, attendance and long-term retention need organiser approval and a separate production system.
+- The candidate must review the AI worklog and campaign copy, enter their own identity details, and record their own three-minute video before submitting the assessment form.
+
+## Local development
+
+Requires Node.js 22 or newer and a Postgres database. The deployed project uses a free Neon resource connected to Vercel. Set `DATABASE_URL` and a unique `EMAIL_HASH_SECRET` in a local `.env.local`; never commit either value. Then:
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The API creates its demo schema on first use. Run checks with:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npx playwright test
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`playwright.config.ts` uses installed Chrome and starts a local server if needed. Set `TEST_BASE_URL=https://campus-relay-growth.vercel.app` to run against production; tests create isolated fictional workspaces.
 
-## Learn More
+## API outline
 
-To learn more about Next.js, take a look at the following resources:
+`POST /api/demo-workspaces`, `GET /api/projects`, `POST /api/recommendations`, `POST /api/visits`, `POST /api/registrations`, `POST /api/invites`, `POST /api/invites/{token}/accept`, `POST /api/links`, `GET /api/dashboard`, `GET /api/export.csv`, and `POST /api/demo-workspaces/{id}/reset`. Dashboard, CSV, links and reset require `x-operator-token`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Implementation notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 App Router and TypeScript on Vercel; Neon Postgres via the serverless driver. The application stores no raw email, contacts no students and uses only synthetic or evaluator-entered fictional demo data. `src/lib/catalog.ts` is the project catalogue and matching logic; `src/lib/starters.ts` contains the downloadable sample data. `src/app/api/[...path]/route.ts` implements validation, persistence and metrics. The project was created with AI assistance, documented in the worklog.

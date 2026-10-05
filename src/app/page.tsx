@@ -1,69 +1,23 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import { useState } from 'react';
+import { api } from '@/lib/client';
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+  const [busy,setBusy]=useState(false),[error,setError]=useState('');
+  async function create(seedMode:boolean) {
+    setBusy(true);setError('');
+    try {
+      const result=await api<{workspaceId:string;operatorUrl:string;studentUrl:string}>('demo-workspaces',{method:'POST',body:{seedMode}});
+      localStorage.setItem(`campus-relay-operator-${result.workspaceId}`,new URL(result.operatorUrl).hash.replace('#operator=',''));
+      window.location.href=result.studentUrl;
+    } catch(e) {setError(e instanceof Error?e.message:'Could not create workspace.');setBusy(false)}
+  }
+  return <main className="home-shell">
+    <header className="site-header"><strong>Campus <span>Relay</span></strong><span>Independent assessment simulation</span></header>
+    <section className="home-main">
+      <div className="home-intro"><h1>Build Your First AI Project in 60 Minutes</h1><p>A free online workshop proposal for final-year engineering students. Explore one small project starter, then try a fictional registration and optional friend invite.</p><div className="offer-details"><span>Free</span><span>Online</span><span>60 minutes</span><span>Date, time and instructor to be confirmed</span></div></div>
+      <div className="home-actions"><h2>Open a demo workspace</h2><p>Each workspace keeps its own simulated records for seven days. Your Growth desk link is saved in this browser and can be copied from the student view.</p><button className="primary" onClick={()=>create(false)} disabled={busy}>Create an empty workspace <span aria-hidden="true">→</span></button><button className="secondary" onClick={()=>create(true)} disabled={busy}>Create a seeded workspace</button>{error&&<p className="error" role="alert">{error}</p>}<p className="fine">Seeded records are synthetic examples. No students are contacted, no email is sent, and no campaign has been run.</p></div>
+    </section>
+    <section className="home-bottom"><div><h2>For the student</h2><p>Choose a branch, level and interests; see a scoped project before entering a fictional email.</p></div><div><h2>For the growth reviewer</h2><p>Inspect source attribution, unique eligible counts, experiment denominators and a forecast separate from the demo records.</p><p><a href="/assets/Campus_Relay_Growth_Plan.pdf">Read the two-page growth plan ↗</a> &nbsp; <a href="/assets/AI_Worklog.md">Read the AI worklog ↗</a></p></div></section>
+  </main>;
 }

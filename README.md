@@ -4,6 +4,8 @@ An independent, AI-assisted assessment simulation for a proposed free online wor
 
 **Public demo:** https://campus-relay-growth.vercel.app
 
+**Public source:** https://github.com/Ajey95/campus-relay-growth
+
 **Growth plan:** https://campus-relay-growth.vercel.app/assets/Campus_Relay_Growth_Plan.pdf
 
 **AI worklog:** https://campus-relay-growth.vercel.app/assets/AI_Worklog.md

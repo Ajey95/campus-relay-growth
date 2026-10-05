@@ -6,6 +6,8 @@ Use these as candidate-reviewed drafts. Enter identity details yourself and do n
 
 https://campus-relay-growth.vercel.app
 
+Public source: https://github.com/Ajey95/campus-relay-growth
+
 The landing route creates an isolated fictional workspace. The separate Growth desk link is issued there; the student invitation never includes its operator token.
 
 ## Your 3 Tests

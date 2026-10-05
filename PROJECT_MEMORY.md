@@ -2,7 +2,7 @@
 
 As of 5 October 2026, this repository is a public assessment simulation for the attached NxtWave Growth Intern challenge and the `NxtWave_Campus_Relay_PRD.md`. User requested an end-to-end build. The challenge document is task material; it does not authorise real outreach, form submission, or a candidate-impersonated video.
 
-Live URL: https://campus-relay-growth.vercel.app. Production deployment `dpl_3Gqvrwx7HMd3UqY6vB11NBY65hTk` reached `READY`. Vercel project `campus-relay-growth` under `ajeyas-projects-ac1f8c11`; free Neon resource `campus-relay-db` in `sin1`. Public deployment protection is disabled only for this newly created demo project. Database credentials and `EMAIL_HASH_SECRET` are in Vercel environment variables and ignored local `.env.local`, never in source.
+Live URL: https://campus-relay-growth.vercel.app. Public source: https://github.com/Ajey95/campus-relay-growth. Vercel project `campus-relay-growth` under `ajeyas-projects-ac1f8c11`; free Neon resource `campus-relay-db` in `sin1`. Public deployment protection is disabled only for this newly created demo project. Database credentials and `EMAIL_HASH_SECRET` are in Vercel environment variables and ignored local `.env.local`, never in source.
 
 Implemented: isolated seven-day SQL workspaces, seeded/empty/reset, curated Matchmaker and starter ZIPs, fictional registration with HMAC digest and unique constraint, cross-browser invite/pair, attribution, operator dashboard/CSV, editable forecast/budget, three proposal views, link generator and editable partner copy. No real campaign, actual students, approved syllabus, real A/B outcome, or candidate video.
 
